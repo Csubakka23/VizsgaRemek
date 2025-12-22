@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartBook — Okos Időpontfoglaló (Demo)</title>
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="hatter-atmenet"></div>
+
+  <div class="uveg-kontener">
+    <header>
+      <h1>SmartBook — Okos Időpontfoglaló</h1>
+      <div class="sor-flex">
+        <div id="current-user" class="halvany-szoveg small">Bejelentkezés szükséges</div>
+        <button id="btn-logout" class="atlatszo-gomb hidden">Kijelentkezés</button>
+        <button id="toggle-admin" class="atlatszo-gomb">Admin felület</button>
+      </div>
+    </header>
+
+    <main>
+      <aside class="oldalsav">
+        <div class="kartya szekcio" id="auth-card">
+          <h3 class="small">Regisztráció / Bejelentkezés</h3>
+          <div id="auth-forms">
+            <label>Email</label>
+            <input id="email" type="email" placeholder="pl. user@pelda.hu"/>
+            <label>Jelszó</label>
+            <input id="password" type="password" placeholder="jelszó"/>
+            <div class="sor-flex">
+              <button id="btn-login">Bejelentkezés</button>
+              <button id="btn-register" class="atlatszo-gomb">Regisztráció</button>
+            </div>
+            <div class="halvany-szoveg small" style="margin-top:8px">
+              A demo helyi tárolót használ; valós rendszerben szerver és titkosítás szükséges.
+            </div>
+          </div>
+        </div>
+
+        <div class="kartya szekcio" id="quick-book-card">
+          <h3 class="small">Gyors foglalás</h3>
+          <label>Szolgáltatás</label>
+          <select id="select-service"></select>
+          <label>Dolgozó</label>
+          <select id="select-employee"></select>
+          <label>Dátum</label>
+          <input id="date" type="date"/>
+          <label>Időpont</label>
+          <select id="select-time"></select>
+          <div class="sor-flex">
+            <button id="btn-book">Foglalás</button>
+            <button id="btn-suggest" class="atlatszo-gomb">Ajánlott idő</button>
+          </div>
+          <div id="booking-msg" class="halvany-szoveg small" style="margin-top:8px"></div>
+        </div>
+
+        <div class="kartya szekcio" id="my-bookings">
+          <h3 class="small">Saját foglalások</h3>
+          <ul id="bookings-list"></ul>
+        </div>
+      </aside>
+
+      <section>
+        <div class="kartya">
+          <div class="statisztika-kontener">
+            <div class="statisztika-elem">
+              <div class="halvany-szoveg small">Összes foglalás</div>
+              <div id="kpi-total" style="font-weight:600">0</div>
+            </div>
+            <div class="statisztika-elem">
+              <div class="halvany-szoveg small">Ma</div>
+              <div id="kpi-today" style="font-weight:600">0</div>
+            </div>
+            <div class="statisztika-elem">
+              <div class="halvany-szoveg small">Meg nem jelent</div>
+              <div id="kpi-no-show" style="font-weight:600">0</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:center;justify-content:space-between">
+            <h2 style="margin:0">Admin / Áttekintés</h2>
+            <div class="jobb-oldali-gombok">
+              <button id="btn-refresh" class="atlatszo-gomb">Frissít</button>
+              <button id="btn-export" class="atlatszo-gomb">Export (JSON)</button>
+            </div>
+          </div>
+
+          <hr style="margin:12px 0">
+
+          <div id="admin-area" class="hidden">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="kartya">
+                <h4 class="small">Szolgáltatások</h4>
+                <label>Név</label>
+                <input id="svc-name" type="text" placeholder="pl. Hajvágás (30 min)"/>
+                <label>Időtartam (perc)</label>
+                <input id="svc-duration" type="text" placeholder="30"/>
+                <div class="sor-flex">
+                  <button id="btn-add-service">Hozzáadás</button>
+                </div>
+                <ul id="services-list" class="lista" style="margin-top:8px"></ul>
+              </div>
+
+              <div class="kartya">
+                <h4 class="small">Dolgozók & elérhetőség</h4>
+                <label>Név</label>
+                <input id="emp-name" type="text" placeholder="pl. Anna"/>
+                <label>Heti munkaidő (pl. H-P 09:00-17:00)</label>
+                <input id="emp-availability" type="text" placeholder="H-P 09:00-17:00"/>
+                <div class="sor-flex">
+                  <button id="btn-add-employee">Hozzáad</button>
+                </div>
+                <ul id="employees-list" class="lista" style="margin-top:8px"></ul>
+              </div>
+            </div>
+
+            <div style="margin-top:12px">
+              <div class="kartya">
+                <h4 class="small">Foglalások kezelése</h4>
+                <ul id="admin-bookings" class="lista"></ul>
+              </div>
+            </div>
+          </div>
+
+          <div id="public-info" style="margin-top:12px">
+            <h4 class="small">Leírás</h4>
+            <p class="halvany-szoveg small">
+              Ez egy demó-verzió a SmartBook rendszer frontend logikájáról. 
+              A demo helyben, a böngésző localStorage-jában tárol — valós alkalmazáshoz backend és hitelesítés szükséges.
+            </p>
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+        <div class="kartya">
+          <h4 class="small">Fejlesztői jegyzetek</h4>
+          <ul class="halvany-szoveg small">
+            <li>Intelligens ajánló egyszerű: elemzi korábbi foglalások időpont-feloszlását és a legkevésbé foglalt időt javasolja.</li>
+            <li>Értesítés-szimuláció: a rendszer "emlékeztetőket" naplózza notifications-ban.</li>
+            <li>Valódi QR-kód generáláshoz külső könyvtár (pl. QRCode.js) integrálható.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="halvany-szoveg small">SmartBook Demo — LocalStorage alapú prototípus</footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
